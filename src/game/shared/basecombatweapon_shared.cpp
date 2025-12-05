@@ -247,8 +247,8 @@ const unsigned char *CBaseCombatWeapon::GetEncryptionKey( void )
 //-----------------------------------------------------------------------------
 void CBaseCombatWeapon::Precache( void )
 {
-	Msg("Server got classname %s\n", GetClassname());
-	Msg("Server got script %s\n", GetWeaponScriptName());
+	Msg("The Server got classname %s\n", GetClassname());
+	Msg("The Server got script %s\n", GetWeaponScriptName());
 
 	m_iPrimaryAmmoType = m_iSecondaryAmmoType = -1;
 
