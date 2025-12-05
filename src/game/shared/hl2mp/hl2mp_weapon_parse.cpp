@@ -24,6 +24,7 @@ CHL2MPSWeaponInfo::CHL2MPSWeaponInfo()
 
 void CHL2MPSWeaponInfo::Parse( KeyValues *pKeyValuesData, const char *szWeaponName )
 {
+	Msg("szPrintName - %s\n", szPrintName);
 	BaseClass::Parse( pKeyValuesData, szWeaponName );
 
 	m_iPlayerDamage = pKeyValuesData->GetInt( "damage", 0 );

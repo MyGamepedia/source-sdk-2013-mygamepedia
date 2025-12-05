@@ -247,15 +247,13 @@ const unsigned char *CBaseCombatWeapon::GetEncryptionKey( void )
 //-----------------------------------------------------------------------------
 void CBaseCombatWeapon::Precache( void )
 {
-#if defined( CLIENT_DLL )
-	Assert( Q_strlen( GetClassname() ) > 0 );
-	// Msg( "Client got %s\n", GetClassname() );
-#endif
+	Msg("Server got classname %s\n", GetClassname());
+	Msg("Server got script %s\n", GetWeaponScriptName());
+
 	m_iPrimaryAmmoType = m_iSecondaryAmmoType = -1;
 
 	// Add this weapon to the weapon registry, and get our index into it
-	// Get weapon data from script file
-	if ( ReadWeaponDataFromFileForSlot( filesystem, GetClassname(), &m_hWeaponFileInfo, GetEncryptionKey() ) )
+	if ( ReadWeaponDataFromFileForSlot( filesystem, GetWeaponScriptName(), &m_hWeaponFileInfo, GetEncryptionKey() ) ) // Get weapon data from script file
 	{
 		// Get the ammo indexes for the ammo's specified in the data file
 		if ( GetWpnData().szAmmo1[0] )
@@ -263,7 +261,7 @@ void CBaseCombatWeapon::Precache( void )
 			m_iPrimaryAmmoType = GetAmmoDef()->Index( GetWpnData().szAmmo1 );
 			if (m_iPrimaryAmmoType == -1)
 			{
-				Msg("ERROR: Weapon (%s) using undefined primary ammo type (%s)\n",GetClassname(), GetWpnData().szAmmo1);
+				Msg("ERROR: Weapon (%s) using undefined primary ammo type (%s)\n", GetWeaponScriptName(), GetWpnData().szAmmo1);
 			}
  #if defined ( TF_DLL ) || defined ( TF_CLIENT_DLL )
 			// Ammo override
@@ -280,7 +278,7 @@ void CBaseCombatWeapon::Precache( void )
 			m_iSecondaryAmmoType = GetAmmoDef()->Index( GetWpnData().szAmmo2 );
 			if (m_iSecondaryAmmoType == -1)
 			{
-				Msg("ERROR: Weapon (%s) using undefined secondary ammo type (%s)\n",GetClassname(),GetWpnData().szAmmo2);
+				Msg("ERROR: Weapon (%s) using undefined secondary ammo type (%s)\n", GetWeaponScriptName(),GetWpnData().szAmmo2);
 			}
 
 		}
@@ -312,7 +310,7 @@ void CBaseCombatWeapon::Precache( void )
 	else
 	{
 		// Couldn't read data file, remove myself
-		Warning( "Error reading weapon data file for: %s\n", GetClassname() );
+		Warning( "Error reading weapon data file for: %s\n", GetWeaponScriptName());
 	//	Remove( );	//don't remove, this gets released soon!
 	}
 }
@@ -2134,6 +2132,25 @@ char *CBaseCombatWeapon::GetDeathNoticeName( void )
 #endif
 }
 
+inline const char* CBaseCombatWeapon::GetWeaponScriptName()
+{
+	if (Q_strcmp(m_iszWeaponScriptName.Get(), "") > 0)
+	{
+		return m_iszWeaponScriptName.Get();
+	}
+	return GetClassname();
+}
+
+bool CBaseCombatWeapon::KeyValue(const char* szKeyName, const char* szValue)
+{
+	if (FStrEq(szKeyName, "weaponscriptname"))
+	{
+		Q_strncpy(m_iszWeaponScriptName.GetForModify(), szValue, sizeof(m_iszWeaponScriptName));
+		return true;
+	}
+	return BaseClass::KeyValue(szKeyName, szValue);
+}
+
 //====================================================================================
 // WEAPON RELOAD TYPES
 //====================================================================================
@@ -2586,25 +2603,27 @@ BEGIN_PREDICTION_DATA( CBaseCombatWeapon )
 
 	DEFINE_PRED_FIELD( m_nViewModelIndex, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 
-	// Not networked
+	DEFINE_PRED_FIELD(m_iszWeaponScriptName, FIELD_STRING, FTYPEDESC_INSENDTABLE),	// Weapon script name
 
-	DEFINE_FIELD( m_bInReload, FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_bFireOnEmpty, FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_bFiringWholeClip, FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_flNextEmptySoundTime, FIELD_FLOAT ),
-	DEFINE_FIELD( m_Activity, FIELD_INTEGER ),
-	DEFINE_FIELD( m_fFireDuration, FIELD_FLOAT ),
-	DEFINE_FIELD( m_iszName, FIELD_INTEGER ),		
-	DEFINE_FIELD( m_bFiresUnderwater, FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_bAltFiresUnderwater, FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_fMinRange1, FIELD_FLOAT ),		
-	DEFINE_FIELD( m_fMinRange2, FIELD_FLOAT ),		
-	DEFINE_FIELD( m_fMaxRange1, FIELD_FLOAT ),		
-	DEFINE_FIELD( m_fMaxRange2, FIELD_FLOAT ),		
-	DEFINE_FIELD( m_bReloadsSingly, FIELD_BOOLEAN ),	
-	DEFINE_FIELD( m_bRemoveable, FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_iPrimaryAmmoCount, FIELD_INTEGER ),
-	DEFINE_FIELD( m_iSecondaryAmmoCount, FIELD_INTEGER ),
+	DEFINE_PRED_FIELD(m_bInReload, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_bFireOnEmpty, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_bFiringWholeClip, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_flNextEmptySoundTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_Activity, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_fFireDuration, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_iszName, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_bFiresUnderwater, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_bAltFiresUnderwater, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_fMinRange1, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_fMinRange2, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_fMaxRange1, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_fMaxRange2, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_bReloadsSingly, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_bRemoveable, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_iPrimaryAmmoCount, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_iSecondaryAmmoCount, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
+
+	// Not networked
 
 	//DEFINE_PHYSPTR( m_pConstraint ),
 
@@ -2637,6 +2656,7 @@ BEGIN_DATADESC( CBaseCombatWeapon )
 
 	DEFINE_FIELD( m_iState, FIELD_INTEGER ),
 	DEFINE_FIELD( m_iszName, FIELD_STRING ),
+	DEFINE_FIELD(m_iszWeaponScriptName, FIELD_STRING),
 	DEFINE_FIELD( m_iPrimaryAmmoType, FIELD_INTEGER ),
 	DEFINE_FIELD( m_iSecondaryAmmoType, FIELD_INTEGER ),
 	DEFINE_FIELD( m_iClip1, FIELD_INTEGER ),
@@ -2703,6 +2723,9 @@ BEGIN_DATADESC( CBaseCombatWeapon )
 	DEFINE_OUTPUT( m_OnPlayerPickup, "OnPlayerPickup"),
 	DEFINE_OUTPUT( m_OnNPCPickup, "OnNPCPickup"),
 	DEFINE_OUTPUT( m_OnCacheInteraction, "OnCacheInteraction" ),
+
+	//Keyvalues
+	DEFINE_KEYFIELD(m_iszWeaponScriptName, FIELD_STRING, "weaponscriptname"),
 
 END_DATADESC()
 
@@ -2870,6 +2893,8 @@ BEGIN_NETWORK_TABLE(CBaseCombatWeapon, DT_BaseCombatWeapon)
 	SendPropModelIndex( SENDINFO(m_iWorldModelIndex) ),
 	SendPropInt( SENDINFO(m_iState ), 8, SPROP_UNSIGNED ),
 	SendPropEHandle( SENDINFO(m_hOwner) ),
+	// Network the weaponscriptname to clients
+	SendPropString(SENDINFO(m_iszWeaponScriptName)),
 #else
 	RecvPropDataTable("LocalWeaponData", 0, 0, &REFERENCE_RECV_TABLE(DT_LocalWeaponData)),
 	RecvPropDataTable("LocalActiveWeaponData", 0, 0, &REFERENCE_RECV_TABLE(DT_LocalActiveWeaponData)),
@@ -2877,5 +2902,7 @@ BEGIN_NETWORK_TABLE(CBaseCombatWeapon, DT_BaseCombatWeapon)
 	RecvPropInt( RECVINFO(m_iWorldModelIndex)),
 	RecvPropInt( RECVINFO(m_iState), 0, &CBaseCombatWeapon::RecvProxy_WeaponState ),
 	RecvPropEHandle( RECVINFO(m_hOwner ), RecvProxy_WeaponOwner ),
+	// Receive the string on the client
+	RecvPropString(RECVINFO(m_iszWeaponScriptName)),
 #endif
 END_NETWORK_TABLE()

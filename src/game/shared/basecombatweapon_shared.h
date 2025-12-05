@@ -317,6 +317,10 @@ public:
 
 	virtual char			*GetDeathNoticeName( void );	// Get the string to print death notices with
 
+	inline const char* GetWeaponScriptName(void);	// get the name of the weapon in the weapon script file
+
+	virtual bool KeyValue(const char* szKeyName, const char* szValue) OVERRIDE; // override to set weapon script name
+
 	CBaseCombatCharacter	*GetOwner() const;
 	void					SetOwner( CBaseCombatCharacter *owner );
 	virtual void			OnPickedUp( CBaseCombatCharacter *pNewOwner );
@@ -626,6 +630,7 @@ public:
 	// Weapon data
 	CNetworkVar( int, m_iState );				// See WEAPON_* definition
 	string_t				m_iszName;				// Classname of this weapon.
+	CNetworkString(m_iszWeaponScriptName, MAX_WEAPON_STRING);
 	CNetworkVar( int, m_iPrimaryAmmoType );		// "primary" ammo index into the ammo info array 
 	CNetworkVar( int, m_iSecondaryAmmoType );	// "secondary" ammo index into the ammo info array
 	CNetworkVar( int, m_iClip1 );				// number of shots left in the primary weapon clip, -1 it not used
@@ -639,6 +644,25 @@ public:
 	bool					m_bReloadsSingly;		// True if this weapon reloads 1 round at a time
 	float					m_fFireDuration;		// The amount of time that the weapon has sustained firing
 	int						m_iSubType;
+
+	/*
+	CNetworkString(m_iszWeaponSoundEmpty, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundSingleShot, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundSingleShotNPC, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundDoubleShot, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundDoubleShotNPC, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundBurst, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundReload, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundReloadNPC, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundMeleeMiss, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundMeleeHitWorld, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundSpecial1, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundSpecial2, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundSpecial3, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundTaunt, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundDeploy, MAX_WORLD_SOUNDS_MP);
+	CNetworkString(m_iszWeaponSoundBurst, MAX_WORLD_SOUNDS_MP);
+	*/
 
 	float					m_flUnlockTime;
 	EHANDLE					m_hLocker;				// Who locked this weapon.

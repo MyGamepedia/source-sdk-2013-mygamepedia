@@ -35,8 +35,8 @@ ConVar sk_weapon_ar2_alt_fire_mass( "sk_weapon_ar2_alt_fire_mass", "150" );
 
 
 IMPLEMENT_NETWORKCLASS_ALIASED( WeaponAR2, DT_WeaponAR2 )
-
 BEGIN_NETWORK_TABLE( CWeaponAR2, DT_WeaponAR2 )
+
 #ifdef GAME_DLL
 	SendPropBool( SENDINFO( m_bShotDelayed ) ),
 	SendPropFloat( SENDINFO( m_flDelayedFire ) ),
