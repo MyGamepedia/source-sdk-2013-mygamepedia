@@ -247,9 +247,6 @@ const unsigned char *CBaseCombatWeapon::GetEncryptionKey( void )
 //-----------------------------------------------------------------------------
 void CBaseCombatWeapon::Precache( void )
 {
-	Msg("The Server got classname %s\n", GetClassname());
-	Msg("The Server got script %s\n", GetWeaponScriptName());
-
 	m_iPrimaryAmmoType = m_iSecondaryAmmoType = -1;
 
 	// Add this weapon to the weapon registry, and get our index into it

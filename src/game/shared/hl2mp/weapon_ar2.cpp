@@ -314,6 +314,22 @@ void CWeaponAR2::AddViewKick( void )
 	DoMachineGunKick( pPlayer, EASY_DAMPEN, MAX_VERTICAL_KICK, m_fFireDuration, SLIDE_LIMIT );
 }
 
+#ifdef CLIENT_DLL
+
+//-----------------------------------------------------------------------------
+// Purpose: Starts the client-side version thinking
+//-----------------------------------------------------------------------------
+void C_WeaponAR2::OnDataChanged(DataUpdateType_t updateType)
+{
+	BaseClass::OnDataChanged(updateType);
+	if (updateType == DATA_UPDATE_CREATED)
+	{
+		Precache(); //cache weapon on client again, otherwise the client will always use default script name while server not
+		SetNextClientThink(CLIENT_THINK_ALWAYS);
+	}
+}
+#endif
+
 //-----------------------------------------------------------------------------
 const WeaponProficiencyInfo_t *CWeaponAR2::GetProficiencyValues()
 {

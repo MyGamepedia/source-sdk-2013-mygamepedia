@@ -245,6 +245,10 @@ public:
 #ifndef CLIENT_DLL
 	DECLARE_ACTTABLE();
 #endif
+
+#ifdef CLIENT_DLL
+	virtual void			OnDataChanged(DataUpdateType_t updateType);
+#endif
 	
 protected:
 

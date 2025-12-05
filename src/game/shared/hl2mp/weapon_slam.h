@@ -84,6 +84,10 @@ public:
 	DECLARE_DATADESC();
 #endif
 
+#ifdef CLIENT_DLL
+	virtual void			OnDataChanged(DataUpdateType_t updateType);
+#endif
+
 private:
 	CWeapon_SLAM( const CWeapon_SLAM & );
 

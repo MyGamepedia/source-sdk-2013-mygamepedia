@@ -61,6 +61,10 @@ public:
 
 	CWeaponCrowbar( const CWeaponCrowbar & );
 
+#ifdef CLIENT_DLL
+	virtual void			OnDataChanged(DataUpdateType_t updateType);
+#endif
+
 private:
 		
 };

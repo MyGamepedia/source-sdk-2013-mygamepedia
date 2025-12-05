@@ -65,6 +65,10 @@ public:
 	DECLARE_ACTTABLE();
 #endif
 
+#ifdef CLIENT_DLL
+	virtual void			OnDataChanged(DataUpdateType_t updateType);
+#endif
+
 protected:
 
 	Vector	m_vecTossVelocity;
@@ -248,6 +252,23 @@ void CWeaponSMG1::SecondaryAttack( void )
 	// misyl: Stop dryfire taking over if we have 1 ammo left.
 	m_flNextEmptySoundTime = gpGlobals->curtime + 1.0f;
 }
+
+#ifdef CLIENT_DLL
+
+//-----------------------------------------------------------------------------
+// Purpose: Starts the client-side version thinking
+//-----------------------------------------------------------------------------
+void C_WeaponSMG1::OnDataChanged(DataUpdateType_t updateType)
+{
+	BaseClass::OnDataChanged(updateType);
+	if (updateType == DATA_UPDATE_CREATED)
+	{
+		Precache(); //cache weapon on client again, otherwise the client will always use default script name while server not
+		SetNextClientThink(CLIENT_THINK_ALWAYS);
+	}
+}
+#endif
+
 
 //-----------------------------------------------------------------------------
 const WeaponProficiencyInfo_t *CWeaponSMG1::GetProficiencyValues()

@@ -658,6 +658,7 @@ void C_WeaponStunStick::OnDataChanged( DataUpdateType_t updateType )
 	BaseClass::OnDataChanged( updateType );
 	if ( updateType == DATA_UPDATE_CREATED )
 	{
+		Precache(); //cache weapon on client again, otherwise the client will always use default script name while server not
 		SetNextClientThink( CLIENT_THINK_ALWAYS );
 		SetupAttachmentPoints();
 	}

@@ -54,6 +54,10 @@ public:
 	
 	virtual bool Deploy( void );
 
+#ifdef CLIENT_DLL
+	virtual void			OnDataChanged(DataUpdateType_t updateType);
+#endif
+
 
 	virtual const Vector& GetBulletSpread( void )
 	{

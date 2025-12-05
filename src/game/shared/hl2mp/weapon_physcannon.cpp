@@ -1002,6 +1002,8 @@ void CWeaponPhysCannon::OnDataChanged( DataUpdateType_t type )
 
 	if ( type == DATA_UPDATE_CREATED )
 	{
+		Precache(); //cache weapon on client again, otherwise the client will always use default script name while server not
+
 		SetNextClientThink( CLIENT_THINK_ALWAYS );
 
 		C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, false );

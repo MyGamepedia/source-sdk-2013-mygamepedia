@@ -409,6 +409,10 @@ public:
 	virtual void Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
 #endif
 
+#ifdef CLIENT_DLL
+	virtual void			OnDataChanged(DataUpdateType_t updateType);
+#endif
+
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
 
@@ -966,3 +970,20 @@ bool CWeaponCrossbow::SendWeaponAnim( int iActivity )
 	//For now, just set the ideal activity and be done with it
 	return BaseClass::SendWeaponAnim( newActivity );
 }
+
+#ifdef CLIENT_DLL
+
+//-----------------------------------------------------------------------------
+// Purpose: Starts the client-side version thinking
+//-----------------------------------------------------------------------------
+void C_WeaponCrossbow::OnDataChanged(DataUpdateType_t updateType)
+{
+	BaseClass::OnDataChanged(updateType);
+	if (updateType == DATA_UPDATE_CREATED)
+	{
+		Precache(); //cache weapon on client again, otherwise the client will always use default script name while server not
+		SetNextClientThink(CLIENT_THINK_ALWAYS);
+	}
+}
+#endif
+
